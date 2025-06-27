@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+
+@theme {
+  /* Typography */
+  --font-display: "Archivo Black", sans-serif;
+  --font-heading: "Anton", sans-serif; 
+  --font-mono: "IBM Plex Mono", monospace;
+  
+  /* Brutalist Color Palette (OKLCH values) */
+  /* Base Colors */
+  --color-concrete: oklch(0.78 0.01 81.76);      /* #BCBCBC */
+  --color-charcoal: oklch(0.33 0.01 81.76);      /* #333333 */
+  --color-raw-white: oklch(0.96 0.01 100);       /* #F5F5F5 */
+  --color-industrial-yellow: oklch(0.86 0.15 85.1); /* #FFD23F */
+  --color-rust-red: oklch(0.56 0.13 27.01);      /* #A63D40 */
+  --color-brutalist-blue: oklch(0.45 0.06 256.8); /* #2D4263 */
+  --color-exposed-green: oklch(0.62 0.10 153.6);  /* #5C8D76 */
+  --color-unfinished-beige: oklch(0.89 0.05 83.8); /* #E8DCCA */
+  
+  /* Semantic Color Assignments */
+  /* Background Colors */
+  --color-bg-primary: var(--color-raw-white);
+  --color-bg-secondary: var(--color-concrete);
+  --color-bg-tertiary: var(--color-unfinished-beige);
+  
+  /* Text Colors */
+  --color-text-primary: var(--color-charcoal);
+  --color-text-secondary: var(--color-concrete);
+  --color-text-inverse: var(--color-raw-white);
+  
+  /* UI Element Colors */
+  --color-primary: var(--color-industrial-yellow);
+  --color-secondary: var(--color-brutalist-blue);
+  --color-accent: var(--color-rust-red);
+  
+  /* State Colors */
+  --color-success: var(--color-exposed-green);
+  --color-error: var(--color-rust-red);
+  --color-warning: var(--color-industrial-yellow);
+  --color-info: var(--color-brutalist-blue);
+  
+  /* Border Colors */
+  --color-border-primary: var(--color-charcoal);
+  --color-border-secondary: var(--color-concrete);
+  
+}
