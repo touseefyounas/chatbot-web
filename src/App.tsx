@@ -3,18 +3,15 @@ import { useState, useEffect, useRef } from "react";
 import Button from "./atoms/Button";
 import Card from "./atoms/Card";
 
-import { Send, User, Bot, Upload, File, X } from 'lucide-react';
+import Chat from "./Chat";
+
+import { Send, Upload, File, X } from 'lucide-react';
 
 interface UploadedFile {
   id: number;
   name: string;
   size: number;
   file: File;
-}
-
-interface FormatTimeOptions {
-  hour: '2-digit' | 'numeric';
-  minute: '2-digit' | 'numeric';
 }
 
 const App = () => {
@@ -167,10 +164,6 @@ const App = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' } as FormatTimeOptions);
-  };
-
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -185,7 +178,7 @@ const App = () => {
     <div className="h-dvh">
       
       <Card className="p-[0px] h-dvh">
-      <div className="flex flex-col min-h-[475px] font-mono">
+      <div className="flex flex-col h-full font-mono">
         <div className="bg-secondary flex flex-col gap-2 justify-center">
         <div className="container mx-auto py-2 px-4 text-text-inverse font-mono flex flex-row items-center justify-between">
           <div className="bg-secondary text-text-inverse font-mono">
@@ -231,67 +224,13 @@ const App = () => {
           </div>
         )}
         </div>
-        <div className="flex flex-col h-[872px]">
+        <div className="flex-1 flex flex-col min-h-0">
           {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
-          <div className="max-w-4xl mx-auto space-y-6">
-            {messages.map((message) => (
-              <div key={message.id} className="flex gap-4">
-                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                  message.type === 'user' 
-                    ? 'bg-secondary text-text-inverse' 
-                    : 'bg-primary text-text-primary'
-                }`}>
-                  {message.type === 'user' ? <User size={16} /> : <Bot size={16} />}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-medium text-gray-900">
-                      {message.type === 'user' ? 'You' : 'Assistant'}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {formatTime(message.timestamp)}
-                    </span>
-                  </div>
-                  <div className={`rounded-lg p-4 ${
-                    message.type === 'user' 
-                      ? 'bg-primary/20 text-text-primary' 
-                      : 'bg-white border border-gray-200 text-gray-900'
-                  }`}>
-                    <p className="whitespace-pre-wrap">{message.content}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-            
-            {/* Loading indicator */}
-            {isLoading && (
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-text-primary flex items-center justify-center">
-                  <Bot size={16} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-medium text-gray-900">Assistant</span>
-                    <span className="text-xs text-gray-500">thinking...</span>
-                  </div>
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                      </div>
-                      <span className="text-gray-500 text-sm">Searching through documents...</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            <div ref={messagesEndRef} />
-          </div>
-        </div>
+        <Chat
+          messages={messages}
+          isLoading={isLoading}
+          messagesEndRef={messagesEndRef}
+          />
         
         {/* Input Area */}
       <div className="bg-white border-t border-gray-200 px-6 py-4">
