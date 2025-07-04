@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 
-import Button from "./atoms/Button";
 import Card from "./atoms/Card";
 
 import Chat from "./Chat";
 
-import { Send, Upload, File, X } from 'lucide-react';
+import { Send } from 'lucide-react';
+import Header from "./Header";
 
 interface UploadedFile {
   id: number;
@@ -119,51 +119,6 @@ const App = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-
-  const files = Array.from(e.target.files as FileList);
-  if (files.length === 0) return;
-
-  const file = files[0]; 
-
-  const newFile: UploadedFile = {
-    id: Date.now() + Math.random(),
-    name: file.name,
-    size: file.size,
-    file: file,
-  };
-  setDocuments((prev) => [...prev, newFile]);
-
-  const formData = new FormData();
-  formData.append('pdf', file);
-
-  try {
-    const res = await fetch('http://localhost:3000/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    const result = await res.json();
-    alert(`File uploaded successfully: ${result.message}`);
-  } catch (err) {
-    console.error('Upload failed:', err);
-  }
-};
-
-
-  const removeFile = (fileId: UploadedFile["id"]) => {
-    setDocuments(prev => prev.filter(file => file.id !== fileId));
-  };
-
-
-  const formatFileSize = (bytes:number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -179,51 +134,11 @@ const App = () => {
       
       <Card className="p-[0px] h-dvh">
       <div className="flex flex-col h-full font-mono">
-        <div className="bg-secondary flex flex-col gap-2 justify-center">
-        <div className="container mx-auto py-2 px-4 text-text-inverse font-mono flex flex-row items-center justify-between">
-          <div className="bg-secondary text-text-inverse font-mono">
-          <h1 className="text-2xl font-bold">Document Assistant</h1>
-          <p className="text-sm">Ask questions about your uploaded documents</p>
-          </div>
-          <div className="text-text-primary font-semibold hover:text-text-inverse">
-            <input
-              type="file"
-              id="file-upload"
-              multiple
-              className="hidden"
-              onChange={handleFileUpload}
-            />
-            <Button
-              roundedBorder='half'
-              onClick={() => document.getElementById('file-upload')?.click()}
-            >
-              <Upload className="inline mr-2" />
-              Upload Document
-            </Button>
-          </div>
-        </div>
-
-        {/* Uploaded Files */}
-        {documents.length > 0 && (
-          <div className="flex flex-row gap-1 mb-2 mx-2 items-center">
-            <div className="flex flex-wrap gap-2">
-              {documents.map(file => (
-                <div key={file.id} className="flex items-center gap-2 bg-bg-tertiary text-text-primary px-3 py-1 rounded-full text-sm">
-                  <File size={14} />
-                  <span className="truncate max-w-32">{file.name}</span>
-                  <span className="text-text-primary">({formatFileSize(file.size)})</span>
-                  <button
-                    onClick={() => removeFile(file.id)}
-                    className="hover:bg-secondary hover:text-text-inverse  rounded-full p-0.5"
-                  >
-                    <X size={12} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        </div>
+        <Header
+          documents={documents}
+          setDocuments={setDocuments}
+          setMessages={setMessages}
+        />
         <div className="flex-1 flex flex-col min-h-0">
           {/* Messages */}
         <Chat
@@ -245,7 +160,7 @@ const App = () => {
                 placeholder="Ask a question about your documents..."
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
                 style={{
-                  minHeight: '48px',
+                  minHeight: '36px',
                   maxHeight: '120px',
                   height: 'auto'
                 }}
@@ -258,9 +173,6 @@ const App = () => {
             >
               <Send size={18} />
             </button>
-          </div>
-          <div className="mt-2 text-xs text-gray-500 text-center">
-            Press Enter to send, Shift+Enter for new line
           </div>
         </div>
         </div>
