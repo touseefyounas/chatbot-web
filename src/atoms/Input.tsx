@@ -8,6 +8,8 @@ interface InputProps {
     roundedBorder: 'none' | 'half' | 'full';
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    disabled?: boolean;
+    ref?: React.Ref<HTMLInputElement | null>;
 }
 
 const widthClass = {
@@ -23,11 +25,12 @@ const roundedBorderClass = {
 }
 
 
-const Input = ({placeholder, type, width, focusColor, roundedBorder, value, onChange}: InputProps) => {
+const Input = ({placeholder, type, width, focusColor, roundedBorder, value, onChange, disabled, ref}: InputProps) => {
 
     return (
         <>
         <input 
+        ref={ref}
         value={value}
         onChange={onChange}
         type={type} 
@@ -39,13 +42,15 @@ const Input = ({placeholder, type, width, focusColor, roundedBorder, value, onCh
         transition-all duration-100
         focus:outline-none 
         focus:shadow-[3px_3px_0px_rgba(0,0,0,1)]
-        active:shadow-[3px_3px_0px_rgba(0,0,0,1)] 
+        active:shadow-[3px_3px_0px_rgba(0,0,0,1)]
+        disabled:cursor-not-allowed 
         ${roundedBorderClass[roundedBorder]}`}
         style={{ backgroundColor: 'white' }}
         onFocus={(e) => e.currentTarget.style.backgroundColor = focusColor}
         onBlur={(e) => e.currentTarget.style.backgroundColor = 'white'}
         onMouseOver={(e) => e.currentTarget.style.backgroundColor = focusColor}
         onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'white'}
+        disabled={disabled}
         />
         </>
     )

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 import Button from "./atoms/Button";
 import { File, Upload, X, Trash2 } from 'lucide-react';
+import type { Message } from "./types";
 
 interface UploadedFile {
   id: number;
@@ -13,7 +14,7 @@ interface UploadedFile {
 interface HeaderProps {
   documents: UploadedFile[];
   setDocuments: React.Dispatch<React.SetStateAction<UploadedFile[]>>;
-  setMessages: React.Dispatch<React.SetStateAction<{ id: number; type: string; content: string; timestamp: Date }[]>>;
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
 }
 const Header = ({documents, setDocuments, setMessages}: HeaderProps) => {
 
