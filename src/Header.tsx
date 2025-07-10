@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import Button from "./atoms/Button";
 import { File, Upload, X, Trash2 } from 'lucide-react';
@@ -15,8 +15,9 @@ interface HeaderProps {
   documents: UploadedFile[];
   setDocuments: React.Dispatch<React.SetStateAction<UploadedFile[]>>;
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  sessionId: string;
 }
-const Header = ({documents, setDocuments, setMessages}: HeaderProps) => {
+const Header = ({documents, setDocuments, setMessages, sessionId}: HeaderProps) => {
 
     const [systemStatus, setSystemStatus] = useState({ hasDocuments: false, documentCount: 0 });
 
@@ -42,6 +43,9 @@ const Header = ({documents, setDocuments, setMessages}: HeaderProps) => {
         const res = await fetch('http://localhost:3000/upload', {
             method: 'POST',
             body: formData,
+            headers:{
+              "x-session-id": sessionId
+            }
         });
 
         const result = await res.json();
@@ -58,7 +62,7 @@ const Header = ({documents, setDocuments, setMessages}: HeaderProps) => {
             return;
         }
         try{
-            const response = await fetch('http://localhost:3000/reset', {
+            const response = await fetch(`http://localhost:3000/reset/${sessionId}`, {
                 method: 'DELETE',
             });
             if (!response.ok) {
@@ -79,9 +83,9 @@ const Header = ({documents, setDocuments, setMessages}: HeaderProps) => {
         }
     }
 
-    const systemStatusUpdate = async () => {
+    const systemStatusUpdate = useCallback(async () => {
         try{
-            const response = await fetch('http://localhost:3000/document/status',{
+            const response = await fetch(`http://localhost:3000/document/${sessionId}`,{
                 method: 'GET',
             })
             if (!response.ok) {
@@ -89,18 +93,19 @@ const Header = ({documents, setDocuments, setMessages}: HeaderProps) => {
             }
             const data = await response.json();
             console.log('System Status:', data);
+
             setSystemStatus({
-                hasDocuments: data.namespaces?.lecture?.vectorCount > 0,
-                documentCount: data.namespaces?.lecture?.vectorCount
+                hasDocuments: data.namespaces?.[sessionId]?.vectorCount > 0,
+                documentCount: data.namespaces?.[sessionId]?.vectorCount
             });
         } catch (error) {
             console.error('Error updating system status:', error);
         }
-    }
+    },[sessionId]);
 
     useEffect(() => {
         systemStatusUpdate();
-    }, [documents]);
+    }, [sessionId, systemStatusUpdate]);
 
     const formatFileSize = (bytes:number) => {
         if (bytes === 0) return '0 Bytes';
@@ -125,7 +130,7 @@ const Header = ({documents, setDocuments, setMessages}: HeaderProps) => {
           </div>
           <div className="flex items-center gap-2 text-sm">
             <div className={`w-2 h-2 rounded-full ${systemStatus.hasDocuments ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-            <span>{systemStatus.hasDocuments ? `${systemStatus.documentCount} docs loaded` : 'No documents'}</span>
+            <span>{systemStatus.hasDocuments ? `${systemStatus.documentCount} docs loaded` : `No documents for ${sessionId}`}</span>
             </div>
           <div className="text-text-primary font-semibold">
             <input
