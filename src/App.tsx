@@ -8,7 +8,7 @@ import Chat from "./Chat";
 import Header from "./Header";
 import ChatBox from "./ChatBox";
 import Init from "./Init";
-
+import type { Mode } from "./types";
 interface UploadedFile {
   id: number;
   name: string;
@@ -20,12 +20,13 @@ const App = () => {
 
   const [sessionId, setSessionId] = useState<string>('');
   const [ validSession, setValidSession ] = useState<boolean>(false);
+  const [mode, setMode] = useState<Mode>("chat");
 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
       type: 'assistant',
-      content: "Hello! I'm your document assistant. Upload some documents and I'll help you find information from them.",
+      content: "Hello! How can I assist you today?",
       timestamp: new Date()
     }
   ]);
@@ -34,7 +35,6 @@ const App = () => {
   const [documents, setDocuments] = useState<UploadedFile[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef(null);
-
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -79,6 +79,9 @@ const App = () => {
           isLoading={isLoading}
           setIsLoading={setIsLoading}
           setMessages={setMessages}
+          mode={mode}
+          setMode={setMode}
+          sessionId={sessionId}
         />
 
         </div>

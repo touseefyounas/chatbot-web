@@ -4,3 +4,5 @@ export interface Message {
     content: string;
     timestamp: Date;
     }
+
+export type Mode = 'chat' | 'web' | 'rag';
